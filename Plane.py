@@ -1,5 +1,4 @@
 from pygame.math import Vector3 as vec3
-from pygame.math import Vector2 as vec2
 from intersection import planeIntersection
 from IObject import IObject
 
@@ -8,10 +7,12 @@ class Plane(IObject):
         self.pos = pos
         self.normal = normal
         self.color = color
-        self.roughness = 0.1
+        self.roughness = 1
+        self.brightness = 0
         
-    def setMaterial(self,roughness:float):
+    def setMaterial(self,roughness:float=1, brightness:float=0):
         self.roughness = roughness
+        self.brightness = brightness
     
     def intersection(self,origin:vec3,direction:vec3):
         return planeIntersection(origin,direction,self.pos,self.normal)

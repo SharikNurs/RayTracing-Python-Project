@@ -1,5 +1,7 @@
 {
     "width": 960,
     "height": 540,
-    "triesPerPixel": 2
+    "bg_color": [0, 0, 0],
+    "triesPerPixel": 1,
+    "reflections": 3
 }

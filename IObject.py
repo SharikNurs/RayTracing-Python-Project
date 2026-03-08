@@ -1,5 +1,4 @@
 from pygame.math import Vector3 as vec3
-from pygame.math import Vector2 as vec2
 from abc import ABC, abstractmethod
 
 
@@ -9,7 +8,7 @@ class IObject(ABC):
         ...
     
     @abstractmethod
-    def setMaterial(self,roughness:float):
+    def setMaterial(self):
         ...
 
     @abstractmethod
