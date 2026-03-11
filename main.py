@@ -17,19 +17,21 @@ from save import Save
 
 image = np.zeros((setting['height'],setting['width'],3),np.uint8)
 
-camera = Camera(vec3(-5,-3,0),vec3(0,0,pi/10))
+camera = Camera(vec3(-3,0,0),vec3(0,0,0))
 
 objects = [
-    Plane (vec3(0, 1, 0), vec3(0,-1,0),vec3(0.5,0.5,0.8)),
-    Sphere(vec3(5, -0.5, 0),            2,vec3(0.7,0.2,0.2)),
-    Sphere(vec3(4,-3,-15),            9,vec3(0.2,0.7,0.2)),
-    Sphere(vec3(12, -5, 5),            3,vec3(0.2,0.2,0.7))
+    Plane(vec3(0,4,0),vec3(0,-1,0),vec3(1)),
+    Plane(vec3(0,-4,0),vec3(0,1,0),vec3(1)),
+    Plane(vec3(0,0,4),vec3(0,0,-1),vec3(0.2,1,0.2)),
+    Plane(vec3(0,0,-4),vec3(0,0,-1),vec3(1,0.2,0.2)),
+    Plane(vec3(8,0,0),vec3(-1,0,0),vec3(1,1,1)),
+    Plane(vec3(-4,0,0),vec3(1,0,0),vec3(0)),
+
+    Sphere(vec3(4,0,0), 2.5, vec3(1)),
 ]
 
-objects[0].material.roughness=1
-objects[1].material.roughness=0
-objects[2].material.roughness=0.1
-objects[3].material.roughness=1
+objects[0].material.isChessColored = True
+objects[1].material.glowing = 1.5
 
 startTime = time()
 

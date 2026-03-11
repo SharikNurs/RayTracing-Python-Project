@@ -6,22 +6,31 @@ from data import setting
 
 
 
-def rayTracing(origin,direction,figures,entryColor:vec3=vec3(1),bounces:int=0,reflectionsNum:int=0,entryLight:vec3=vec3(0)):
+def rayTracing(origin,direction,figures,entryColor:vec3=vec3(1),bounces:int=0,reflectionsNum:int=0,entryLight:vec3=vec3(0),absorbedlight:float=1):
     ray = emitRay(origin,direction,figures)
     
     color = entryColor.copy()
     incomingLight = entryLight.copy()
+    n = absorbedlight
 
     if not ray[2]:
-        sky_color = vec3(setting['sky_color']) / 255
+        sky_color = vec3(setting['sky_color']) / 255 * n
         color = mul(color,sky_color)
         incomingLight += color * setting['sky_glowing']
-        return (color, incomingLight)
+        return (color, incomingLight, n)
     
-    n = 1
-    for _ in range(reflectionsNum): n *= ray[1].material.albedo
+    n *= ray[1].material.albedo
 
     color = mul(color,ray[1].material.color * n)
+    
+    # chess like plane
+    if ray[1].material.isChessColored:
+        pos = origin + direction*ray[0]
+        if (pos.x // 1.5 + pos.z // 1.5) % 2 == 0:
+            color = mul(color,ray[1].material.color * n)
+        else:
+            color = mul(color,ray[1].material.color / 2 * n)
+
     incomingLight += (ray[1].material.glowing * color)
     
     if bounces > 0:
@@ -39,9 +48,9 @@ def rayTracing(origin,direction,figures,entryColor:vec3=vec3(1),bounces:int=0,re
         reflected = (1 - ray[1].material.roughness) * reflected + ray[1].material.roughness * randomVector
         reflected = reflected.normalize()
 
-        color, incomingLight = rayTracing(pos,reflected,figures,color,bounces-1,reflectionsNum+1,entryLight=incomingLight)
+        color, incomingLight, n = rayTracing(pos,reflected,figures,color,bounces-1,reflectionsNum+1,entryLight=incomingLight,absorbedlight=n)
     
-    return (color, incomingLight)
+    return (color, incomingLight, n)
 
 
 
