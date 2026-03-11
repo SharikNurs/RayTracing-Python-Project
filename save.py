@@ -3,10 +3,10 @@ import numpy as np
 
 def Save(image,floats:bool=False):
     if floats:
-        for y in image:
-            for x in y:
-                for c in x:
-                    c: np.uint8 = int(c*255)
+        for y in range(len(image)):
+            for x in range(len(image[0])):
+                for c in range(len(image[0][0])):
+                    image[y][x][c] = np.uint8(255 * image[y][x][c])
                     
     img = Image.fromarray(image)
     img.save("result.png")

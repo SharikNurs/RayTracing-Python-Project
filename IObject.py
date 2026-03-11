@@ -6,10 +6,6 @@ class IObject(ABC):
     @abstractmethod
     def intersection(self,origin:vec3,direction:vec3):
         ...
-    
-    @abstractmethod
-    def setMaterial(self):
-        ...
 
     @abstractmethod
     def getNormal(self,v:vec3):

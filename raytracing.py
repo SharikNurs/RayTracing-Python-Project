@@ -1,4 +1,4 @@
-from functions import getRandomVector
+from functions import getRandomVector, mul
 from pygame.math import Vector3 as vec3
 from random import random
 from data import setting
@@ -6,29 +6,42 @@ from data import setting
 
 
 
-def rayTracing(origin,direction,figures,entryColor:vec3=vec3(0),bounces:int=0,reflectionsNum=1.0):
+def rayTracing(origin,direction,figures,entryColor:vec3=vec3(1),bounces:int=0,reflectionsNum:int=0,entryLight:vec3=vec3(0)):
     ray = emitRay(origin,direction,figures)
     
     color = entryColor.copy()
+    incomingLight = entryLight.copy()
 
     if not ray[2]:
-        color += vec3(*setting['bg_color']) / reflectionsNum
-        return color
+        sky_color = vec3(setting['sky_color']) / 255
+        color = mul(color,sky_color)
+        incomingLight += color * setting['sky_glowing']
+        return (color, incomingLight)
     
-    color += ray[1].color / reflectionsNum
+    n = 1
+    for _ in range(reflectionsNum): n *= ray[1].material.albedo
+
+    color = mul(color,ray[1].material.color * n)
+    incomingLight += (ray[1].material.glowing * color)
     
-    if ray[1].roughness < 1 and bounces > 0:
+    if bounces > 0:
+        # reflect the light
         pos = origin + direction*ray[0]
         normal = ray[1].getNormal(pos)
         pos += normal * 0.001
         reflected = direction.reflect(normal)
-        if ray[1].roughness > 0:
-            reflected += ray[1].roughness * getRandomVector()
-            reflected = reflected.normalize()
 
-        color = rayTracing(pos,reflected,figures,color,bounces-1,reflectionsNum+1)
+        # roughness(randomness) to the light
+        randomVector = getRandomVector()
+        if randomVector.dot(normal) < 0:
+            randomVector = - randomVector
+
+        reflected = (1 - ray[1].material.roughness) * reflected + ray[1].material.roughness * randomVector
+        reflected = reflected.normalize()
+
+        color, incomingLight = rayTracing(pos,reflected,figures,color,bounces-1,reflectionsNum+1,entryLight=incomingLight)
     
-    return color
+    return (color, incomingLight)
 
 
 

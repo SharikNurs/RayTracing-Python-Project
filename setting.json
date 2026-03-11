@@ -1,7 +1,8 @@
 {
     "width": 960,
     "height": 540,
-    "bg_color": [0, 0, 0],
-    "triesPerPixel": 1,
-    "reflections": 3
+    "sky_color": [49, 79, 79],
+    "sky_glowing": 3,
+    "triesPerPixel": 3,
+    "reflections": 4
 }
