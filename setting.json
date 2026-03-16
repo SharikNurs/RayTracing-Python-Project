@@ -3,6 +3,6 @@
     "height": 540,
     "sky_color": [49, 79, 79],
     "sky_glowing": 3,
-    "triesPerPixel": 40,
-    "reflections": 10
+    "triesPerPixel": 8,
+    "reflections": 4
 }

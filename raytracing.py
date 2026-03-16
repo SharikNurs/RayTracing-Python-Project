@@ -1,4 +1,4 @@
-from functions import getRandomVector, mul
+from functions import getRandomVector, mul, SchlicksApproximation
 from pygame.math import Vector3 as vec3
 from random import random
 from data import setting
@@ -21,8 +21,6 @@ def rayTracing(origin,direction,figures,entryColor:vec3=vec3(1),bounces:int=0,re
     
     n *= ray[1].material.albedo
 
-    color = mul(color,ray[1].material.color * n)
-    
     # chess like plane
     if ray[1].material.isChessColored:
         pos = origin + direction*ray[0]
@@ -30,8 +28,18 @@ def rayTracing(origin,direction,figures,entryColor:vec3=vec3(1),bounces:int=0,re
             color = mul(color,ray[1].material.color * n)
         else:
             color = mul(color,ray[1].material.color / 2 * n)
+    else:
+        color = mul(color,ray[1].material.color * n)
 
-    incomingLight += (ray[1].material.glowing * color)
+
+    incomingLight += mul((ray[1].material.glowing * ray[1].material.glowingColor), color)
+
+    # blackout depending on the angle of ray incidence
+    #attenuation - ослабление, затухание
+    pos = origin + direction*ray[0]
+    normal = ray[1].getNormal(pos)
+    incomingLight = SchlicksApproximation(direction.normalize(),normal.normalize(),ray[1].material.reflectance,incomingLight)
+    # incomingLight = mul(incomingLight, attenuation)
     
     if bounces > 0:
         # reflect the light
